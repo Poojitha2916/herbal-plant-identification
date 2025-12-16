@@ -1,4 +1,4 @@
-# herbal-plant-identification
+
 # Herbal Plant Identification 🌿
 
 This project identifies herbal plants from leaf images using a deep learning CNN model.
