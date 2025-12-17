@@ -2,7 +2,6 @@ import streamlit as st
 import tensorflow as tf
 import numpy as np
 from PIL import Image
-import json
 import gdown
 import os
 
@@ -12,63 +11,76 @@ st.set_page_config(page_title="Herbal Plant Identification", layout="wide")
 MODEL_URL = "https://drive.google.com/file/d/1a-_536wX34s8nakc84eI6TPatxmidKva/view"
 MODEL_PATH = "herbal_model.h5"
 
-CLASS_URL = "https://drive.google.com/uc?id=YOUR_CLASS_JSON_ID"
-CLASS_PATH = "class_names.json"
-
 @st.cache_resource
-def load_model_and_classes():
+def load_model():
     if not os.path.exists(MODEL_PATH):
         gdown.download(MODEL_URL, MODEL_PATH, fuzzy=True)
+    return tf.keras.models.load_model(MODEL_PATH, compile=False)
 
-    if not os.path.exists(CLASS_PATH):
-        gdown.download(CLASS_URL, CLASS_PATH)
+model = load_model()
 
-    model = tf.keras.models.load_model(MODEL_PATH, compile=False)
+# ---------------- CLASS NAMES ----------------
+CLASS_NAMES = [
+    "Adas","Aloevera","Amla","Amruta_Balli","Andong Merah","Arali",
+    "Ashoka","Ashwagandha","Avacado","Bamboo","Basale","Belimbing Wulu",
+    "Beluntas","Betadin","Betel","Betel_Nut","Brahmi","Castor",
+    "Cincau Perdu","Curry_Leaf","Daun Afrika","Daun Cabe Jawa",
+    "Daun Cocor Bebek","Daun Kumis Kucing","Daun Mangkokan","Daun Suji",
+    "Daun Ungu","Dewa Ndaru","Doddapatre","Ekka","Gandarusa","Ganike",
+    "Garut","Gauva","Geranium","Henna","Hibiscus","Honge","Honje","Iler",
+    "Insulin","Jahe","Jasmine","Jeruk Nipis","Kapulaga","Kayu Putih",
+    "Kecibling","Kemangi","Kembang Sepatu","Kenanga","Kunyit","Lampes",
+    "Legundi","Lemon","Lemon_grass","Lidah Buaya","Mahkota Dewa","Mango",
+    "Melati","Meniran","Mint","Murbey","Nagadali","Neem","Nilam",
+    "Nithyapushpa","Nooni","Pacing Petul","Pandan","Pappaya",
+    "Patah Tulang","Pecut Kuda","Pepper","Pomegranate","Raktachandini",
+    "Rose","Saga Manis","Sapota","Secang","Sereh","Sirih","Srikaya",
+    "Tin","Tulasi","Wood_sorel","Zigzag"
+]
 
-    with open(CLASS_PATH, "r") as f:
-        class_names = json.load(f)
-
-    return model, class_names
-
-model, class_names = load_model_and_classes()
-
-# ---------------- HERBAL DATABASE ----------------
 HERBAL_USES = {
-    "mint": ["Improves digestion", "Relieves cold", "Oral health"],
-    "neem": ["Skin diseases", "Blood purification", "Dental care"],
-    "tulsi": ["Cold & cough", "Immunity booster"],
-    "aloe": ["Skin care", "Digestion"],
+    "Aloevera": ["Skin care", "Burn healing", "Digestive health"],
+    "Neem": ["Blood purification", "Skin diseases", "Dental care"],
+    "Tulasi": ["Cold & cough", "Immunity booster", "Respiratory health"],
+    "Mint": ["Digestion", "Cold relief", "Oral health"],
+    "Amla": ["Vitamin C rich", "Boosts immunity", "Hair health"],
+    "Kunyit": ["Anti-inflammatory", "Wound healing"],
+    "Jahe": ["Digestion", "Reduces nausea"]
 }
 
 # ---------------- UI ----------------
-st.title("🌿 Herbal Plant Identification")
+st.markdown("## 🌿 Herbal Plant Identification System")
 
 uploaded_file = st.file_uploader("Upload plant image", type=["jpg","jpeg","png"])
 identify = st.button("✨ Identify Plant")
 
 if identify and uploaded_file:
     image = Image.open(uploaded_file).convert("RGB")
-    st.image(image, caption="Uploaded Image", width=300)
 
     img = image.resize((224,224))
     img = np.array(img) / 255.0
     img = np.expand_dims(img, axis=0)
 
     preds = model.predict(img)
-    class_id = str(np.argmax(preds))
+    class_id = int(np.argmax(preds))
     confidence = float(np.max(preds))
 
-    plant_name = class_names[class_id].lower()
+    plant_name = CLASS_NAMES[class_id]
 
-    if plant_name in HERBAL_USES:
-        st.success(f"🌱 Plant Identified: {plant_name.title()}")
-        st.write(f"Confidence: {confidence:.2f}")
-        st.markdown("### 🌿 Medicinal Uses")
-        for u in HERBAL_USES[plant_name]:
-            st.markdown(f"- {u}")
-    else:
-        st.error("❌ This is NOT a Herbal / Medicinal Plant")
+    col1, col2 = st.columns([1,2])
+    with col1:
+        st.image(image, use_column_width=True)
+
+    with col2:
+        if plant_name in HERBAL_USES:
+            st.success(f"🌱 Identified Plant: {plant_name}")
+            st.write(f"Confidence: {confidence:.2f}")
+            st.markdown("### 🌿 Medicinal Uses")
+            for u in HERBAL_USES[plant_name]:
+                st.markdown(f"- {u}")
+        else:
+            st.error("❌ This is NOT a Herbal / Medicinal Plant")
 
 # ---------------- COMMON PLANTS ----------------
 st.markdown("## 🌼 Common Medicinal Plants")
-st.write("Tulsi • Neem • Mint • Aloe Vera • Turmeric")
+st.write("Tulasi • Neem • Mint • Aloevera • Amla • Kunyit")
