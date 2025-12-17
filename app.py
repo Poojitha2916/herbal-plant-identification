@@ -1,32 +1,37 @@
 import streamlit as st
 import tensorflow as tf
+import gdown
+import os
 import numpy as np
 from PIL import Image
 
-# Page config
-st.set_page_config(page_title="Herbal Plant Identification", layout="centered")
+MODEL_URL = "https://drive.google.com/uc?id=1a-_536wX34s8nakc84eI6TPatxmidKva"
+MODEL_PATH = "herbal_model.h5"
 
-# Load trained model
-model = tf.keras.models.load_model("herbal_model.h5")
+@st.cache_resource
+def load_model():
+    if not os.path.exists(MODEL_PATH):
+        with st.spinner("Downloading model (first time only)..."):
+            gdown.download(MODEL_URL, MODEL_PATH, quiet=False)
+    return tf.keras.models.load_model(MODEL_PATH, compile=False)
 
-# Class labels (CHANGE according to your dataset)
-CLASS_NAMES = ['AloeVera', 'Neem', 'Tulsi']
+model = load_model()
 
-st.title("🌿 Herbal Plant Identification System")
-st.write("Upload a leaf image to identify the herbal plant")
+st.title("🌿 Herbal Plant Identification")
 
-uploaded_file = st.file_uploader("Choose a leaf image", type=["jpg", "png", "jpeg"])
+uploaded_file = st.file_uploader("Upload a plant image", type=["jpg", "jpeg", "png"])
 
-if uploaded_file is not None:
+if uploaded_file:
     image = Image.open(uploaded_file).convert("RGB")
-    st.image(image, caption="Uploaded Leaf Image", use_container_width=True)
+    st.image(image, caption="Uploaded Image", use_column_width=True)
 
     img = image.resize((224, 224))
-    img_array = np.array(img) / 255.0
-    img_array = np.expand_dims(img_array, axis=0)
+    img = np.array(img) / 255.0
+    img = np.expand_dims(img, axis=0)
 
-    prediction = model.predict(img_array)
-    predicted_class = CLASS_NAMES[np.argmax(prediction)]
+    predictions = model.predict(img)
+    class_id = np.argmax(predictions)
+    confidence = float(np.max(predictions))
 
-    st.success(f"🌱 Predicted Herbal Plant: **{predicted_class}**")
-
+    st.success(f"Prediction class ID: {class_id}")
+    st.info(f"Confidence: {confidence:.2f}")
