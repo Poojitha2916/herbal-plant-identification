@@ -8,10 +8,15 @@ import os
 # ---------------- PAGE CONFIG ----------------
 st.set_page_config(page_title="Herbal Plant Identification", layout="wide")
 
-# ---------------- BACKGROUND COLOR ----------------
+# ---------------- CLEAN UI CSS ----------------
 st.markdown("""
 <style>
-.stApp { background-color: #f7f7f7; }
+/* Background */
+.stApp {
+    background-color: #f7f7f7;
+}
+
+/* Header */
 .header {
     background-color: #e0f2f1;
     padding: 25px;
@@ -21,25 +26,18 @@ st.markdown("""
     color: #0f3d2e;
     border-bottom: 2px solid #ccc;
 }
-.card {
-    background: white;
-    padding: 30px;
-    border-radius: 15px;
-    border: 1px solid #ddd;
+
+/* REMOVE ALL WHITE BOXES */
+.card, .result-box, .common {
+    background: transparent !important;
+    border: none !important;
+    padding: 0 !important;
+    box-shadow: none !important;
 }
-.result-box {
-    background: #ffffff;
-    padding: 25px;
-    border-radius: 15px;
-    border: 1px solid #ddd;
-}
-.common {
-    background: white;
-    padding: 15px;
-    border-radius: 10px;
-    border: 1px solid #ddd;
-    text-align: center;
-    font-weight: 600;
+
+/* Normal text look */
+ul {
+    padding-left: 20px;
 }
 </style>
 """, unsafe_allow_html=True)
@@ -78,7 +76,7 @@ CLASS_NAMES = [
     "Tin","Tulasi","Wood_sorel","Zigzag"
 ]
 
-# ---------------- PLANT DESCRIPTIONS (2 LINES EACH) ----------------
+# ---------------- PLANT DESCRIPTION ----------------
 PLANT_DESCRIPTION = {
     "Adas": "Adas is an aromatic herb commonly used in traditional medicine. It supports digestion and relieves bloating.",
     "Aloevera": "A succulent medicinal plant known for its soothing gel. Widely used for skin care and digestive health.",
@@ -167,11 +165,12 @@ PLANT_DESCRIPTION = {
     "Wood_sorel": "A medicinal leafy plant. Used as cooling agent and digestive aid.",
     "Zigzag": "An ornamental medicinal plant. Used in traditional herbal remedies."
 
+    
 }
 
 # ---------------- HERBAL USES ----------------
 HERBAL_USES = {
-    "Adas": ["Digestive aid", "Relieves bloating", "Improves appetite"],
+   "Adas": ["Digestive aid", "Relieves bloating", "Improves appetite"],
     "Aloevera": ["Skin care", "Burn healing", "Digestive health"],
     "Amla": ["Vitamin C rich", "Boosts immunity", "Hair health"],
     "Amruta_Balli": ["Immunity booster", "Fever management", "Detoxification"],
@@ -259,12 +258,11 @@ HERBAL_USES = {
     "Zigzag": ["Traditional ornamental medicinal plant"]
 }
 
-# ---------------- UI FLOW ----------------
-st.markdown("<div class='card'>", unsafe_allow_html=True)
-uploaded_file = st.file_uploader("Upload Plant Image 🌸", type=["jpg","jpeg","png"])
+# ---------------- UPLOAD ----------------
+uploaded_file = st.file_uploader("📤 Upload Plant Image", type=["jpg","jpeg","png"])
 identify = st.button("✨ Identify Plant")
-st.markdown("</div>", unsafe_allow_html=True)
 
+# ---------------- PREDICTION ----------------
 if identify and uploaded_file:
     image = Image.open(uploaded_file).convert("RGB")
 
@@ -277,33 +275,31 @@ if identify and uploaded_file:
     plant_name = CLASS_NAMES[class_id]
 
     col1, col2 = st.columns([1,2])
+
     with col1:
         st.image(image, use_column_width=True)
 
     with col2:
-        st.markdown("<div class='result-box'>", unsafe_allow_html=True)
         st.success(f"🌱 {plant_name}")
 
-        # Description
-        desc = PLANT_DESCRIPTION.get(
-            plant_name,
-            "This is a medicinal plant used in traditional herbal practices."
+        st.write(
+            PLANT_DESCRIPTION.get(
+                plant_name,
+                "This is a medicinal plant used in traditional herbal practices."
+            )
         )
-        st.write(desc)
 
-        # Medicinal uses
         if plant_name in HERBAL_USES:
             st.markdown("### 🌿 Medicinal Uses")
             for u in HERBAL_USES[plant_name]:
-                st.markdown(f"- {u}")
+                st.write(f"• {u}")
         else:
             st.info("Medicinal uses information not available.")
 
-        st.markdown("</div>", unsafe_allow_html=True)
-
 # ---------------- COMMON PLANTS ----------------
 st.markdown("## 🌼 Common Medicinal Plants")
+
 c1, c2, c3, c4 = st.columns(4)
 for col, name in zip([c1,c2,c3,c4], ["Tulasi","Neem","Mint","Aloevera"]):
     with col:
-        st.markdown(f"<div class='common'>{name}</div>", unsafe_allow_html=True)
+        st.write(name)
