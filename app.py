@@ -16,7 +16,7 @@ st.markdown("""
 .block-container {
     padding-top: 0rem;
 }
-.stAlert, .stButton, .stFileUploader {
+.stAlert {
     background: transparent !important;
 }
 
@@ -54,12 +54,17 @@ st.markdown("""
     box-shadow:0 20px 35px rgba(0,0,0,0.25);
 }
 
-.upload-box h2 {
-    color:#2e7d32;
+/* MOVE FILE UPLOADER INSIDE BOX */
+.upload-wrapper .stFileUploader {
+    margin-top: -20px;
+    display: flex;
+    justify-content: center;
 }
 
-.upload-box p {
-    color:#4a7c6a;
+.upload-wrapper .stButton {
+    display: flex;
+    justify-content: center;
+    margin-top: 10px;
 }
 
 /* BUTTON */
@@ -238,7 +243,6 @@ DESCRIPTIONS = {
     "Tulasi": "A sacred medicinal plant in India. Used for immunity and respiratory health.",
     "Wood_sorel": "A medicinal leafy plant. Used as cooling agent and digestive aid.",
     "Zigzag": "An ornamental medicinal plant. Used in traditional herbal remedies."
-
 }
 
 USES = {
@@ -330,16 +334,16 @@ USES = {
     "Zigzag": ["Traditional ornamental medicinal plant"]
 }
 
-# ---------------- UPLOAD ----------------
-st.markdown("""
-<div class='upload-box'>
-<h2>Upload Plant Image 🌸</h2>
-<p>Select a leaf or plant image to identify its medicinal uses</p>
-</div>
-""", unsafe_allow_html=True)
+# ---------------- UPLOAD (FIXED) ----------------
+st.markdown("<div class='upload-box'>"
+            "<h2>Upload Plant Image 🌸</h2>"
+            "<p>Select a leaf or plant image to identify its medicinal uses</p>"
+            "</div>", unsafe_allow_html=True)
 
+st.markdown("<div class='upload-wrapper'>", unsafe_allow_html=True)
 uploaded_file = st.file_uploader("", type=["jpg","jpeg","png"])
 identify = st.button("Identify Plant ✨")
+st.markdown("</div>", unsafe_allow_html=True)
 
 # ---------------- RESULT ----------------
 if identify and uploaded_file:
