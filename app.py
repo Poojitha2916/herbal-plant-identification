@@ -11,47 +11,48 @@ st.set_page_config(
     layout="wide"
 )
 
-# ---------------- AESTHETIC BACKGROUND ----------------
+# ---------------- CLEAN UI (NO AESTHETIC BACKGROUND) ----------------
 st.markdown("""
 <style>
 .stApp {
-    background: linear-gradient(135deg, #e8f5e9, #f1f8e9);
+    background-color: white;
 }
 .header {
-    background: linear-gradient(135deg, #7ddc9c, #5bbf7a);
-    padding: 25px;
+    background-color: #f5f5f5;
+    padding: 20px;
     text-align: center;
     font-size: 32px;
     font-weight: bold;
-    color: #0f3d2e;
-    border-radius: 0 0 40px 40px;
-    box-shadow: 0 8px 20px rgba(0,0,0,0.25);
+    color: black;
+    border-bottom: 2px solid #ddd;
+    margin-bottom: 30px;
 }
 .card {
     background: white;
     padding: 30px;
-    border-radius: 30px;
-    box-shadow: 0 15px 30px rgba(0,0,0,0.15);
+    border-radius: 10px;
+    border: 1px solid #ddd;
+    margin-bottom: 30px;
 }
 .result-box {
-    background: #f0fff7;
-    padding: 30px;
-    border-radius: 30px;
-    box-shadow: 0 15px 30px rgba(0,0,0,0.2);
+    background: #fafafa;
+    padding: 25px;
+    border-radius: 10px;
+    border: 1px solid #ddd;
 }
 .common {
-    background: #ffffff;
-    padding: 20px;
-    border-radius: 25px;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+    background: white;
+    padding: 15px;
+    border-radius: 8px;
+    border: 1px solid #ddd;
     text-align: center;
+    font-weight: 600;
 }
 </style>
 """, unsafe_allow_html=True)
 
 # ---------------- HEADER ----------------
 st.markdown("<div class='header'>🌿 Herbal Plant Identification System</div>", unsafe_allow_html=True)
-st.write("")
 
 # ---------------- MODEL ----------------
 MODEL_URL = "https://drive.google.com/file/d/1a-_536wX34s8nakc84eI6TPatxmidKva/view"
@@ -65,7 +66,7 @@ def load_model():
 
 model = load_model()
 
-# ---------------- CLASS NAMES (EXACT DATASET ORDER) ----------------
+# ---------------- CLASS NAMES ----------------
 CLASS_NAMES = [
     "Adas","Aloevera","Amla","Amruta_Balli","Andong Merah","Arali",
     "Ashoka","Ashwagandha","Avacado","Bamboo","Basale","Belimbing Wulu",
@@ -84,7 +85,7 @@ CLASS_NAMES = [
     "Tin","Tulasi","Wood_sorel","Zigzag"
 ]
 
-# ---------------- HERBAL USES (FULL – AS YOU PROVIDED) ----------------
+# ---------------- HERBAL USES (FULL) ----------------
 HERBAL_USES = {
     "Adas": ["Digestive aid", "Relieves bloating", "Improves appetite"],
     "Aloevera": ["Skin care", "Burn healing", "Digestive health"],
@@ -184,6 +185,7 @@ st.markdown("</div>", unsafe_allow_html=True)
 
 if identify and uploaded_file:
     image = Image.open(uploaded_file).convert("RGB")
+
     img = image.resize((224,224))
     img = np.array(img) / 255.0
     img = np.expand_dims(img, axis=0)
@@ -214,4 +216,4 @@ st.markdown("## 🌼 Common Medicinal Plants")
 c1, c2, c3, c4 = st.columns(4)
 for col, name in zip([c1,c2,c3,c4], ["Tulasi","Neem","Mint","Aloevera"]):
     with col:
-        st.markdown(f"<div class='common'><h4>{name}</h4></div>", unsafe_allow_html=True)
+        st.markdown(f"<div class='common'>{name}</div>", unsafe_allow_html=True)
