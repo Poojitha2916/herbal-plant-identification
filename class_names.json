@@ -1,0 +1,16 @@
+import json
+from tensorflow.keras.preprocessing.image import ImageDataGenerator
+
+datagen = ImageDataGenerator(rescale=1./255)
+
+train_gen = datagen.flow_from_directory(
+    "dataset_path",
+    target_size=(224,224),
+    batch_size=32,
+    class_mode="categorical"
+)
+
+class_names = {v:k for k,v in train_gen.class_indices.items()}
+
+with open("class_names.json", "w") as f:
+    json.dump(class_names, f)
