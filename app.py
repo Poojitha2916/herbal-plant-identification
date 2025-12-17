@@ -163,7 +163,7 @@ st.markdown("## 🌼 Common Medicinal Plants")
 c1, c2, c3, c4 = st.columns(4)
 
 with c1:
-    st.markdown("<div class='card'><b>Tulasi</b><br>Immunity booster</div>", unsafe_allow_html=True)
+    st.markdown("<div class='card'><b>Tulasi</b><br>Immunity booster</div>")
 with c2:
     st.markdown("<div class='card'><b>Neem</b><br>Skin & blood purifier</div>", unsafe_allow_html=True)
 with c3:
