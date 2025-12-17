@@ -19,7 +19,7 @@ def load_model():
 
 model = load_model()
 
-# ---------------- CLASS NAMES ----------------
+# ---------------- CLASS NAMES (EXACT DATASET ORDER) ----------------
 CLASS_NAMES = [
     "Adas","Aloevera","Amla","Amruta_Balli","Andong Merah","Arali",
     "Ashoka","Ashwagandha","Avacado","Bamboo","Basale","Belimbing Wulu",
@@ -38,15 +38,18 @@ CLASS_NAMES = [
     "Tin","Tulasi","Wood_sorel","Zigzag"
 ]
 
+# ---------------- MEDICINAL USES ----------------
 HERBAL_USES = {
     "Aloevera": ["Skin care", "Burn healing", "Digestive health"],
     "Neem": ["Blood purification", "Skin diseases", "Dental care"],
-    "Tulasi": ["Cold & cough", "Immunity booster", "Respiratory health"],
-    "Mint": ["Digestion", "Cold relief", "Oral health"],
-    "Amla": ["Vitamin C rich", "Boosts immunity", "Hair health"],
+    "Tulasi": ["Cold & cough", "Boosts immunity"],
+    "Mint": ["Improves digestion", "Cold relief"],
+    "Amla": ["Vitamin C rich", "Hair health"],
     "Kunyit": ["Anti-inflammatory", "Wound healing"],
     "Jahe": ["Digestion", "Reduces nausea"]
 }
+
+CONFIDENCE_THRESHOLD = 0.75  # ⭐ KEY FIX
 
 # ---------------- UI ----------------
 st.markdown("## 🌿 Herbal Plant Identification System")
@@ -72,14 +75,19 @@ if identify and uploaded_file:
         st.image(image, use_column_width=True)
 
     with col2:
-        if plant_name in HERBAL_USES:
-            st.success(f"🌱 Identified Plant: {plant_name}")
-            st.write(f"Confidence: {confidence:.2f}")
-            st.markdown("### 🌿 Medicinal Uses")
-            for u in HERBAL_USES[plant_name]:
-                st.markdown(f"- {u}")
+        if confidence < CONFIDENCE_THRESHOLD:
+            st.error("❌ This image does NOT belong to a known Herbal / Medicinal Plant")
+            st.write(f"Confidence too low: {confidence:.2f}")
         else:
-            st.error("❌ This is NOT a Herbal / Medicinal Plant")
+            if plant_name in HERBAL_USES:
+                st.success(f"🌱 Identified Plant: {plant_name}")
+                st.write(f"Confidence: {confidence:.2f}")
+                st.markdown("### 🌿 Medicinal Uses")
+                for u in HERBAL_USES[plant_name]:
+                    st.markdown(f"- {u}")
+            else:
+                st.warning(f"🌱 Plant Identified: {plant_name}")
+                st.info("Medicinal uses not available in database")
 
 # ---------------- COMMON PLANTS ----------------
 st.markdown("## 🌼 Common Medicinal Plants")
