@@ -375,5 +375,3 @@ for col, plant in zip([c1,c2,c3,c4], CLASS_NAMES):
             unsafe_allow_html=True
         )
 
-# ---------------- FOOTER ----------------
-st.markdown("<div class='footer'>🌸 2025 Herbal AI Project | Aesthetic UI 🌱</div>", unsafe_allow_html=True)
