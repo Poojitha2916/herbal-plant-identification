@@ -8,37 +8,129 @@ import os
 # ---------------- PAGE CONFIG ----------------
 st.set_page_config(page_title="Herbal Plant Identification", layout="wide")
 
-# ---------------- CLEAN UI CSS ----------------
+# ---------------- CUSTOM HTML-LIKE CSS ----------------
 st.markdown("""
 <style>
-/* Background */
-.stApp {
-    background-color: #f7f7f7;
-}
 
-/* Header */
-.header {
-    background-color: #e0f2f1;
-    padding: 25px;
-    text-align: center;
-    font-size: 32px;
-    font-weight: bold;
-    color: #0f3d2e;
-    border-bottom: 2px solid #ccc;
+/* REMOVE STREAMLIT WHITE BOXES */
+.block-container {
+    padding-top: 0rem;
 }
-
-/* REMOVE ALL WHITE BOXES */
-.card, .result-box, .common {
+.stAlert, .stButton, .stFileUploader {
     background: transparent !important;
-    border: none !important;
-    padding: 0 !important;
-    box-shadow: none !important;
 }
 
-/* Normal text look */
-ul {
-    padding-left: 20px;
+/* BODY */
+.stApp {
+    min-height:100vh;
+    background:
+        linear-gradient(rgba(224,247,250,0.9), rgba(241,248,233,0.9)),
+        url("https://images.unsplash.com/photo-1466692476868-aef1dfb1e735")
+        center/cover fixed;
+    font-family:'Segoe UI', Tahoma, sans-serif;
 }
+
+/* HEADER */
+.header {
+    background: linear-gradient(135deg,#7ddc9c,#5bbf7a);
+    color:#0f3d2e;
+    padding:24px;
+    text-align:center;
+    font-size:30px;
+    font-weight:bold;
+    border-bottom-left-radius:40px;
+    border-bottom-right-radius:40px;
+    box-shadow:0 8px 20px rgba(0,0,0,0.25);
+}
+
+/* UPLOAD BOX */
+.upload-box {
+    background:linear-gradient(135deg,#fff1f8,#e8fff3);
+    border-radius:40px;
+    padding:45px;
+    text-align:center;
+    margin:40px auto;
+    border:4px dashed #a5e6c6;
+    box-shadow:0 20px 35px rgba(0,0,0,0.25);
+}
+
+.upload-box h2 {
+    color:#2e7d32;
+}
+
+.upload-box p {
+    color:#4a7c6a;
+}
+
+/* BUTTON */
+.stButton>button {
+    background:linear-gradient(135deg,#ffb6d5,#ff8fb8);
+    border:none;
+    padding:15px 38px;
+    color:white;
+    font-size:16px;
+    border-radius:50px;
+    box-shadow:0 10px 20px rgba(255,143,184,0.6);
+    transition:0.35s;
+}
+.stButton>button:hover {
+    transform:scale(1.08);
+}
+
+/* RESULT */
+.result-box {
+    background:linear-gradient(135deg,#e6fff6,#f0fff9);
+    padding:40px;
+    border-radius:45px;
+    box-shadow:0 25px 45px rgba(0,0,0,0.3);
+    border:5px solid #d1f7e5;
+}
+
+.result-box h3 {
+    color:#1b5e20;
+}
+.result-box p, li {
+    color:#3f6f60;
+    line-height:1.8;
+}
+
+/* COMMON PLANTS */
+.section-title {
+    text-align:center;
+    font-size:32px;
+    color:white;
+    margin:70px 0 30px;
+    text-shadow:0 6px 18px rgba(0,0,0,0.6);
+}
+
+.plant-card {
+    background:linear-gradient(135deg,#fff6fb,#f1fff8);
+    border-radius:45px;
+    text-align:center;
+    padding:20px;
+    box-shadow:0 20px 35px rgba(0,0,0,0.25);
+    transition:0.35s;
+}
+.plant-card:hover {
+    transform:translateY(-10px);
+}
+
+.plant-card h4 {
+    color:#2e7d32;
+}
+
+/* FOOTER */
+.footer {
+    margin-top:80px;
+    background:linear-gradient(135deg,#7ddc9c,#5bbf7a);
+    color:#0f3d2e;
+    text-align:center;
+    padding:18px;
+    border-top-left-radius:40px;
+    border-top-right-radius:40px;
+    box-shadow:0 -8px 20px rgba(0,0,0,0.3);
+}
+
 </style>
 """, unsafe_allow_html=True)
 
@@ -57,27 +149,9 @@ def load_model():
 
 model = load_model()
 
-# ---------------- CLASS NAMES ----------------
-CLASS_NAMES = [
-    "Adas","Aloevera","Amla","Amruta_Balli","Andong Merah","Arali",
-    "Ashoka","Ashwagandha","Avacado","Bamboo","Basale","Belimbing Wulu",
-    "Beluntas","Betadin","Betel","Betel_Nut","Brahmi","Castor",
-    "Cincau Perdu","Curry_Leaf","Daun Afrika","Daun Cabe Jawa",
-    "Daun Cocor Bebek","Daun Kumis Kucing","Daun Mangkokan","Daun Suji",
-    "Daun Ungu","Dewa Ndaru","Doddapatre","Ekka","Gandarusa","Ganike",
-    "Garut","Gauva","Geranium","Henna","Hibiscus","Honge","Honje","Iler",
-    "Insulin","Jahe","Jasmine","Jeruk Nipis","Kapulaga","Kayu Putih",
-    "Kecibling","Kemangi","Kembang Sepatu","Kenanga","Kunyit","Lampes",
-    "Legundi","Lemon","Lemon_grass","Lidah Buaya","Mahkota Dewa","Mango",
-    "Melati","Meniran","Mint","Murbey","Nagadali","Neem","Nilam",
-    "Nithyapushpa","Nooni","Pacing Petul","Pandan","Pappaya",
-    "Patah Tulang","Pecut Kuda","Pepper","Pomegranate","Raktachandini",
-    "Rose","Saga Manis","Sapota","Secang","Sereh","Sirih","Srikaya",
-    "Tin","Tulasi","Wood_sorel","Zigzag"
-]
+CLASS_NAMES = ["Mint", "Neem", "Tulasi", "Aloevera"]
 
-# ---------------- PLANT DESCRIPTION ----------------
-PLANT_DESCRIPTION = {
+DESCRIPTIONS = {
     "Adas": "Adas is an aromatic herb commonly used in traditional medicine. It supports digestion and relieves bloating.",
     "Aloevera": "A succulent medicinal plant known for its soothing gel. Widely used for skin care and digestive health.",
     "Amla": "A nutrient-rich fruit high in vitamin C. Commonly used to boost immunity and improve hair health.",
@@ -165,12 +239,10 @@ PLANT_DESCRIPTION = {
     "Wood_sorel": "A medicinal leafy plant. Used as cooling agent and digestive aid.",
     "Zigzag": "An ornamental medicinal plant. Used in traditional herbal remedies."
 
-    
 }
 
-# ---------------- HERBAL USES ----------------
-HERBAL_USES = {
-   "Adas": ["Digestive aid", "Relieves bloating", "Improves appetite"],
+USES = {
+    "Adas": ["Digestive aid", "Relieves bloating", "Improves appetite"],
     "Aloevera": ["Skin care", "Burn healing", "Digestive health"],
     "Amla": ["Vitamin C rich", "Boosts immunity", "Hair health"],
     "Amruta_Balli": ["Immunity booster", "Fever management", "Detoxification"],
@@ -259,20 +331,24 @@ HERBAL_USES = {
 }
 
 # ---------------- UPLOAD ----------------
-uploaded_file = st.file_uploader("📤 Upload Plant Image", type=["jpg","jpeg","png"])
-identify = st.button("✨ Identify Plant")
+st.markdown("""
+<div class='upload-box'>
+<h2>Upload Plant Image 🌸</h2>
+<p>Select a leaf or plant image to identify its medicinal uses</p>
+</div>
+""", unsafe_allow_html=True)
 
-# ---------------- PREDICTION ----------------
+uploaded_file = st.file_uploader("", type=["jpg","jpeg","png"])
+identify = st.button("Identify Plant ✨")
+
+# ---------------- RESULT ----------------
 if identify and uploaded_file:
     image = Image.open(uploaded_file).convert("RGB")
-
     img = image.resize((224,224))
-    img = np.array(img) / 255.0
-    img = np.expand_dims(img, axis=0)
+    img = np.expand_dims(np.array(img)/255.0, axis=0)
 
     preds = model.predict(img)
-    class_id = int(np.argmax(preds))
-    plant_name = CLASS_NAMES[class_id]
+    plant = CLASS_NAMES[int(np.argmax(preds))]
 
     col1, col2 = st.columns([1,2])
 
@@ -280,26 +356,24 @@ if identify and uploaded_file:
         st.image(image, use_column_width=True)
 
     with col2:
-        st.success(f"🌱 {plant_name}")
-
-        st.write(
-            PLANT_DESCRIPTION.get(
-                plant_name,
-                "This is a medicinal plant used in traditional herbal practices."
-            )
-        )
-
-        if plant_name in HERBAL_USES:
-            st.markdown("### 🌿 Medicinal Uses")
-            for u in HERBAL_USES[plant_name]:
-                st.write(f"• {u}")
-        else:
-            st.info("Medicinal uses information not available.")
+        st.markdown("<div class='result-box'>", unsafe_allow_html=True)
+        st.markdown(f"<h3>{plant}</h3>", unsafe_allow_html=True)
+        st.write(DESCRIPTIONS.get(plant))
+        st.markdown("**Medicinal Uses:**")
+        for u in USES.get(plant, []):
+            st.write("🌿", u)
+        st.markdown("</div>", unsafe_allow_html=True)
 
 # ---------------- COMMON PLANTS ----------------
-st.markdown("## 🌼 Common Medicinal Plants")
+st.markdown("<div class='section-title'>🌼 Common Medicinal Plants 🌼</div>", unsafe_allow_html=True)
 
 c1, c2, c3, c4 = st.columns(4)
-for col, name in zip([c1,c2,c3,c4], ["Tulasi","Neem","Mint","Aloevera"]):
+for col, plant in zip([c1,c2,c3,c4], CLASS_NAMES):
     with col:
-        st.write(name)
+        st.markdown(
+            f"<div class='plant-card'><h4>{plant}</h4></div>",
+            unsafe_allow_html=True
+        )
+
+# ---------------- FOOTER ----------------
+st.markdown("<div class='footer'>🌸 2025 Herbal AI Project | Aesthetic UI 🌱</div>", unsafe_allow_html=True)
