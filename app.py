@@ -6,88 +6,41 @@ import gdown
 import os
 
 # ---------------- PAGE CONFIG ----------------
-st.set_page_config(
-    page_title="Herbal Plant Identification",
-    layout="wide"
-)
+st.set_page_config(page_title="Herbal Plant Identification", layout="wide")
 
-# ---------------- CUSTOM CSS ----------------
+# ---------------- BACKGROUND COLOR ----------------
 st.markdown("""
 <style>
-
-/* REMOVE TOP GAP */
-.block-container {
-    padding-top: 0rem;
-}
-
-/* BACKGROUND */
-.stApp {
-    background: linear-gradient(rgba(245,255,250,0.85), rgba(245,255,250,0.85)),
-                url('https://images.unsplash.com/photo-1501004318641-b39e6451bec6')
-                center/cover fixed;
-}
-
-/* HEADER */
+.stApp { background-color: #f7f7f7; }
 .header {
-    background: linear-gradient(135deg, #7ddc9c, #5bbf7a);
+    background-color: #e0f2f1;
     padding: 25px;
     text-align: center;
     font-size: 32px;
     font-weight: bold;
     color: #0f3d2e;
-    border-radius: 0 0 40px 40px;
-    box-shadow: 0 8px 20px rgba(0,0,0,0.25);
+    border-bottom: 2px solid #ccc;
 }
-
-/* GLASS CARD */
-.card, .result-box, .uses-box, .common {
-    background: rgba(255,255,255,0.75);
-    backdrop-filter: blur(15px);
-    border-radius: 30px;
+.card {
+    background: white;
+    padding: 30px;
+    border-radius: 15px;
+    border: 1px solid #ddd;
+}
+.result-box {
+    background: #ffffff;
     padding: 25px;
-    box-shadow: 0 15px 30px rgba(0,0,0,0.15);
+    border-radius: 15px;
+    border: 1px solid #ddd;
 }
-
-/* UPLOAD TITLE */
-.upload-title {
-    font-size: 22px;
-    font-weight: bold;
-    color: #1e4f3b;
-    margin-bottom: 10px;
-}
-
-/* FILE UPLOADER TEXT */
-label, .stFileUploader label {
-    color: #1e4f3b !important;
-    font-size: 18px !important;
-    font-weight: bold !important;
-}
-
-/* BUTTON */
-.stButton>button {
-    background: linear-gradient(135deg,#81c784,#2e7d32);
-    color: white;
-    font-weight: bold;
-    border-radius: 50px;
-    padding: 10px 25px;
-}
-
-/* SECTION TITLE */
-.section-title {
-    font-size: 26px;
-    font-weight: bold;
-    color: #1e4f3b;
-    margin-top: 30px;
-}
-
-/* COMMON PLANTS */
 .common {
+    background: white;
+    padding: 15px;
+    border-radius: 10px;
+    border: 1px solid #ddd;
     text-align: center;
-    color: #2e7d32;
-    font-weight: bold;
-    border: 2px solid #a5e6c6;
+    font-weight: 600;
 }
-
 </style>
 """, unsafe_allow_html=True)
 
@@ -124,6 +77,97 @@ CLASS_NAMES = [
     "Rose","Saga Manis","Sapota","Secang","Sereh","Sirih","Srikaya",
     "Tin","Tulasi","Wood_sorel","Zigzag"
 ]
+
+# ---------------- PLANT DESCRIPTIONS (2 LINES EACH) ----------------
+PLANT_DESCRIPTION = {
+    "Adas": "Adas is an aromatic herb commonly used in traditional medicine. It supports digestion and relieves bloating.",
+    "Aloevera": "A succulent medicinal plant known for its soothing gel. Widely used for skin care and digestive health.",
+    "Amla": "A nutrient-rich fruit high in vitamin C. Commonly used to boost immunity and improve hair health.",
+    "Amruta_Balli": "A climbing shrub used in Ayurveda. Known for immunity boosting and fever management properties.",
+    "Andong Merah": "A traditional medicinal plant used in herbal remedies. Known for anti-inflammatory and wound healing effects.",
+    "Arali": "An ornamental plant with medicinal value. Traditionally used for general wellness.",
+    "Ashoka": "A sacred medicinal tree in Ayurveda. Commonly used for gynecological and menstrual health.",
+    "Ashwagandha": "A powerful adaptogenic herb. Used to reduce stress and improve strength and vitality.",
+    "Avacado": "A nutritious fruit rich in healthy fats. Supports heart health and overall nutrition.",
+    "Bamboo": "A fast-growing plant used in herbal medicine. Known for bone strengthening and anti-inflammatory properties.",
+    "Basale": "A leafy vegetable with medicinal benefits. Helps digestion and reduces inflammation.",
+    "Belimbing Wulu": "A medicinal fruit plant rich in antioxidants. Commonly used for digestive health.",
+    "Beluntas": "A shrub used in traditional medicine. Helps control body odor and supports digestion.",
+    "Betadin": "A medicinal plant with antiseptic properties. Traditionally used for wound care.",
+    "Betel": "A widely used medicinal leaf in Asia. Supports oral health and digestion.",
+    "Betel_Nut": "A traditional chewing nut. Used as a digestive stimulant in herbal practices.",
+    "Brahmi": "A well-known brain tonic herb. Enhances memory and cognitive function.",
+    "Castor": "A medicinal plant known for castor oil. Used as a laxative and for joint pain relief.",
+    "Cincau Perdu": "A cooling medicinal plant. Helps in digestion and body cooling.",
+    "Curry_Leaf": "An aromatic leaf used in cooking and medicine. Helps regulate digestion and blood sugar.",
+    "Daun Afrika": "A medicinal plant used in folk medicine. Known for immunity support and anti-cancer properties.",
+    "Daun Cabe Jawa": "A traditional herbal plant. Used to improve digestion and reduce inflammation.",
+    "Daun Cocor Bebek": "A succulent medicinal plant. Known for wound healing and anti-inflammatory effects.",
+    "Daun Kumis Kucing": "A kidney-supporting medicinal plant. Acts as a natural diuretic.",
+    "Daun Mangkokan": "A leafy medicinal plant. Commonly used for hair growth and skin care.",
+    "Daun Suji": "A natural coloring plant with medicinal value. Supports digestion.",
+    "Daun Ungu": "A traditional herbal plant. Used to treat hemorrhoids and inflammation.",
+    "Dewa Ndaru": "A rare medicinal plant in folk medicine. Used for general health improvement.",
+    "Doddapatre": "An aromatic medicinal herb. Commonly used to treat cold and digestion issues.",
+    "Ekka": "A traditional medicinal shrub. Used for pain relief and inflammation.",
+    "Gandarusa": "A medicinal plant used for joint pain. Known for anti-inflammatory effects.",
+    "Ganike": "A lesser-known herbal plant. Used in traditional wellness treatments.",
+    "Garut": "A tuber plant used in herbal food remedies. Helps digestion and boosts energy.",
+    "Gauva": "A fruit-bearing medicinal tree. Used to control diarrhea and boost immunity.",
+    "Geranium": "An aromatic medicinal plant. Used in skin care and aromatherapy.",
+    "Henna": "A natural dye plant with cooling properties. Supports hair and skin health.",
+    "Hibiscus": "A flowering medicinal plant. Promotes hair growth and heart health.",
+    "Honge": "A medicinal tree used in Ayurveda. Known for treating skin diseases.",
+    "Honje": "A traditional herbal plant. Supports digestion and antioxidant activity.",
+    "Iler": "A medicinal ornamental plant. Used for wound healing and inflammation.",
+    "Insulin": "A medicinal plant used for diabetes management. Helps regulate blood sugar levels.",
+    "Jahe": "Commonly known as ginger. Widely used for digestion and nausea relief.",
+    "Jasmine": "A fragrant flowering plant. Used for relaxation and aromatherapy.",
+    "Jeruk Nipis": "A citrus medicinal fruit. Rich in vitamin C and detoxifying properties.",
+    "Kapulaga": "Aromatic spice plant. Improves digestion and freshens breath.",
+    "Kayu Putih": "A medicinal tree producing eucalyptus oil. Used for cold and muscle pain relief.",
+    "Kecibling": "A medicinal herb supporting urinary health. Acts as a diuretic.",
+    "Kemangi": "An aromatic herbal leaf. Supports digestion and fights bacteria.",
+    "Kembang Sepatu": "A flowering medicinal plant. Used for hair care and blood pressure control.",
+    "Kenanga": "A fragrant medicinal flower. Used in stress relief and aromatherapy.",
+    "Kunyit": "Also known as turmeric. Famous for anti-inflammatory and healing properties.",
+    "Lampes": "A traditional medicinal plant. Used in folk remedies for wellness.",
+    "Legundi": "A herbal plant used for respiratory health. Reduces inflammation.",
+    "Lemon": "A citrus medicinal fruit. Used for detoxification and immunity.",
+    "Lemon_grass": "A fragrant medicinal grass. Used for digestion and stress relief.",
+    "Lidah Buaya": "Another name for aloe vera. Used for skin healing and digestion.",
+    "Mahkota Dewa": "A powerful medicinal plant. Known for blood purification and anti-cancer properties.",
+    "Mango": "A tropical fruit tree with medicinal value. Supports digestion and immunity.",
+    "Melati": "A fragrant medicinal flower. Used in skin care and relaxation.",
+    "Meniran": "A traditional herbal plant. Supports liver health and immunity.",
+    "Mint": "A cooling aromatic herb. Used for digestion and cold relief.",
+    "Murbey": "A medicinal fruit plant. Helps regulate blood sugar and acts as antioxidant.",
+    "Nagadali": "A folk medicinal plant. Used for general wellness.",
+    "Neem": "A powerful medicinal tree. Known for antibacterial and blood purifying properties.",
+    "Nilam": "Aromatic medicinal plant. Used in perfumes and skin care.",
+    "Nithyapushpa": "A traditional medicinal flower. Used for general health.",
+    "Nooni": "Also known as noni plant. Used to boost immunity and digestion.",
+    "Pacing Petul": "A medicinal herb. Used for pain relief and inflammation.",
+    "Pandan": "An aromatic medicinal plant. Used in digestion and relaxation.",
+    "Pappaya": "Papaya plant used medicinally. Supports digestion and gut health.",
+    "Patah Tulang": "A medicinal shrub. Known for bone healing properties.",
+    "Pecut Kuda": "A traditional medicinal plant. Used for inflammation and pain relief.",
+    "Pepper": "A spice plant with medicinal benefits. Improves digestion and treats cold.",
+    "Pomegranate": "A medicinal fruit rich in antioxidants. Supports heart health.",
+    "Raktachandini": "A medicinal tree. Used for skin diseases and blood purification.",
+    "Rose": "A fragrant flowering plant. Used in skin care and aromatherapy.",
+    "Saga Manis": "A medicinal climber plant. Used for respiratory and cough relief.",
+    "Sapota": "A fruit tree with medicinal value. Supports digestion and energy.",
+    "Secang": "A medicinal wood plant. Used for blood purification and antioxidants.",
+    "Sereh": "Another name for lemongrass. Used for digestion and stress relief.",
+    "Sirih": "A medicinal leaf plant. Used for oral health and antibacterial purposes.",
+    "Srikaya": "A fruit-bearing medicinal plant. Supports digestion and antioxidants.",
+    "Tin": "Also known as fig plant. Rich in fiber and digestive benefits.",
+    "Tulasi": "A sacred medicinal plant in India. Used for immunity and respiratory health.",
+    "Wood_sorel": "A medicinal leafy plant. Used as cooling agent and digestive aid.",
+    "Zigzag": "An ornamental medicinal plant. Used in traditional herbal remedies."
+
+}
 
 # ---------------- HERBAL USES ----------------
 HERBAL_USES = {
@@ -215,58 +259,51 @@ HERBAL_USES = {
     "Zigzag": ["Traditional ornamental medicinal plant"]
 }
 
-CONFIDENCE_THRESHOLD = 0.75
-
-# ---------------- UPLOAD SECTION ----------------
+# ---------------- UI FLOW ----------------
 st.markdown("<div class='card'>", unsafe_allow_html=True)
-st.markdown("<div class='upload-title'>📤 Upload Plant Image</div>", unsafe_allow_html=True)
-
-uploaded_file = st.file_uploader(
-    label="Choose an image file",
-    type=["jpg", "jpeg", "png"]
-)
-
+uploaded_file = st.file_uploader("Upload Plant Image 🌸", type=["jpg","jpeg","png"])
 identify = st.button("✨ Identify Plant")
 st.markdown("</div>", unsafe_allow_html=True)
 
-# ---------------- PREDICTION ----------------
 if identify and uploaded_file:
     image = Image.open(uploaded_file).convert("RGB")
-    img = image.resize((224, 224))
+
+    img = image.resize((224,224))
     img = np.array(img) / 255.0
     img = np.expand_dims(img, axis=0)
 
     preds = model.predict(img)
     class_id = int(np.argmax(preds))
-    confidence = float(np.max(preds))
     plant_name = CLASS_NAMES[class_id]
 
-    col1, col2 = st.columns([1, 2])
-
+    col1, col2 = st.columns([1,2])
     with col1:
         st.image(image, use_column_width=True)
 
     with col2:
         st.markdown("<div class='result-box'>", unsafe_allow_html=True)
+        st.success(f"🌱 {plant_name}")
 
-        if confidence < CONFIDENCE_THRESHOLD:
-            st.error("❌ Not a Herbal / Medicinal Plant")
-        else:
-            st.success(f"🌱 {plant_name}")
-            st.write(f"**Confidence:** {confidence:.2f}")
+        # Description
+        desc = PLANT_DESCRIPTION.get(
+            plant_name,
+            "This is a medicinal plant used in traditional herbal practices."
+        )
+        st.write(desc)
 
-            st.markdown("<div class='uses-box'>", unsafe_allow_html=True)
+        # Medicinal uses
+        if plant_name in HERBAL_USES:
             st.markdown("### 🌿 Medicinal Uses")
-            for use in HERBAL_USES.get(plant_name, ["Data not available"]):
-                st.markdown(f"- {use}")
-            st.markdown("</div>", unsafe_allow_html=True)
+            for u in HERBAL_USES[plant_name]:
+                st.markdown(f"- {u}")
+        else:
+            st.info("Medicinal uses information not available.")
 
         st.markdown("</div>", unsafe_allow_html=True)
 
 # ---------------- COMMON PLANTS ----------------
-st.markdown("<div class='section-title'>🌼 Common Medicinal Plants</div>", unsafe_allow_html=True)
-
+st.markdown("## 🌼 Common Medicinal Plants")
 c1, c2, c3, c4 = st.columns(4)
-for col, name in zip([c1, c2, c3, c4], ["Tulasi", "Neem", "Mint", "Aloevera"]):
+for col, name in zip([c1,c2,c3,c4], ["Tulasi","Neem","Mint","Aloevera"]):
     with col:
-        st.markdown(f"<div class='common'><h4>{name}</h4></div>", unsafe_allow_html=True)
+        st.markdown(f"<div class='common'>{name}</div>", unsafe_allow_html=True)
